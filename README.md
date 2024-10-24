@@ -2,9 +2,9 @@
 ## コンパイル
 ```powershell
 # Windows
-g++ Source.cpp clCRID.cpp clUTF.cpp clADX.cpp -o Source.exe -fexec-charset=CP932
+g++ Source.cpp clCRID.cpp clUTF.cpp clADX.cpp -o CRID-usm-Decrypter.exe -fexec-charset=CP932
 # macOS
-g++ Source.cpp clCRID.cpp clUTF.cpp clADX.cpp -o Source.exe
+g++ Source.cpp clCRID.cpp clUTF.cpp clADX.cpp -o CRID-usm-Decrypter
 ```
 ## 使い方  
 ```
