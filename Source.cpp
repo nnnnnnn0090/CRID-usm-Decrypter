@@ -5,11 +5,28 @@
 // #define WIN32_LEAN_AND_MEAN
 // #include <Windows.h>
 #include <stdio.h>
-#include <direct.h>  // _mkdir
+#ifdef _WIN32
+	#include <direct.h>  // _mkdir for Windows
+#else
+	#include <sys/stat.h>  // mkdir for Unix-like systems
+#endif
 #include "clCRID.h"
 #ifndef _countof
 #define _countof(_array) (sizeof(_array)/sizeof(_array[0]))
 #endif
+
+//--------------------------------------------------
+// ディレクトリ作成
+//--------------------------------------------------
+int create_directory(const char *path) {
+#ifdef _WIN32
+    // Windowsの場合
+    return _mkdir(path);
+#else
+    // macOSや他のUnix系の場合
+    return mkdir(path, 0755);  // 0755はパーミッション
+#endif
+}
 
 //--------------------------------------------------
 // 文字列を16進数とみなして数値に変換
@@ -53,7 +70,7 @@ bool DirectoryCreate(const char *directory){
 
 	// 相対パス(ディレクトリ名のみ)
 	if(!(strchr(directory,'\\')||strchr(directory,'/'))){
-		return _mkdir(directory)==0;
+		return create_directory(directory)==0;
 	}
 
 	// ディレクトリ名チェック
@@ -64,11 +81,11 @@ bool DirectoryCreate(const char *directory){
 	if(strstr(directory," \\"))return false;                // スペースの後の'\'記号のチェック
 
 	// ディレクトリ作成
-	if(_mkdir(directory)){
+	if(create_directory(directory)){
 		char current[0x400];
 		if(!GetDirectory(current,_countof(current),directory))return false;
 		if(!DirectoryCreate(current))return false;
-		if(_mkdir(directory))return false;
+		if(create_directory(directory))return false;
 	}
 
 	return true;
@@ -95,7 +112,7 @@ int main(int argc,char *argv[]){
 			argv[count++]=argv[i];
 		}
 	}
-
+	
 	// 入力チェック
 	if(!count){
 		printf("Error: 入力ファイルを指定してください。\n");

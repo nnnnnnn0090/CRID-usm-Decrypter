@@ -186,14 +186,14 @@ bool clCRID::Demux(const char *filename,const char *directory,bool adxDecode){
 						case 0x00000000:
 							if(!fpInfo){
 								FixFilename(fix_filename,_countof(fix_filename),_utf.GetElement(i,"filename")->GetValueString());
-								snprintf(filename, sizeof(filename), "%s\\%s.ini", directory, fix_filename);
+								snprintf(filename, sizeof(filename), "%s/%s.ini", directory, fix_filename);
 								fpInfo = fopen(filename,"wb");
 							}
 							break;
 						case 0x40534656:
 							if(!fpVideo){
 								FixFilename(fix_filename,_countof(fix_filename),_utf.GetElement(i,"filename")->GetValueString());
-								snprintf(filename,_countof(filename),"%s\\%s.m2v",directory,fix_filename);
+								snprintf(filename,_countof(filename),"%s/%s.m2v",directory,fix_filename);
 								fpVideo = fopen(filename,"wb");
 							}
 							break;
@@ -201,7 +201,7 @@ bool clCRID::Demux(const char *filename,const char *directory,bool adxDecode){
 							if(!fpAudio){
 								char ext[4];
 								FixFilename(fix_filename,_countof(fix_filename),_utf.GetElement(i,"filename")->GetValueString());
-								snprintf(filename,_countof(filename),"%s\\%s",directory,fix_filename);
+								snprintf(filename,_countof(filename),"%s/%s",directory,fix_filename);
 								if (strcmp(GetExtension(ext, _countof(ext), filename), "wav") != 0) {
 									if (strlen(filename) + strlen(".wav") < _countof(filename)) {
 										strcat(filename, ".wav");
