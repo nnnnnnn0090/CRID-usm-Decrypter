@@ -3,6 +3,7 @@
 ```powershell
 # Windows
 g++ main.cpp clCRID.cpp clUTF.cpp clADX.cpp -o CRID-usm-Decrypter-Windows.exe -fexec-charset=CP932
+
 # macOS
 g++ main.cpp clCRID.cpp clUTF.cpp clADX.cpp -o CRID-usm-Decrypter-macOS
 ```
