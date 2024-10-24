@@ -18,7 +18,7 @@ inline unsigned int bswap(unsigned int v){unsigned int r=v&0xFF;r<<=8;v>>=8;r|=v
 inline long long bswap(long long v){long long r=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;return r;}
 inline unsigned long long bswap(unsigned long long v){unsigned long long r=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;return r;}
 inline float bswap(float v){unsigned int i=bswap(*(unsigned int *)&v);return *(float *)&i;}
-inline WCHAR bswap(WCHAR v){short r=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;return r;}
+inline wchar_t bswap(wchar_t v){short r=v&0xFF;r<<=8;v>>=8;r|=v&0xFF;return r;}
 
 //--------------------------------------------------
 // 拡張子を取得
@@ -39,20 +39,20 @@ char *GetExtension(char *extension,int size,const char *path){
 //--------------------------------------------------
 // ファイル名に使えない文字を大文字に変更
 //--------------------------------------------------
-WCHAR bswap(WCHAR c);
+wchar_t bswap(wchar_t c);
 char *FixFilename(char *fix_filename, int size, const char *filename) {
     memset(fix_filename, 0, size);
     for (int i = 0, len = strlen(filename); i < len && i < size - 3; i++, filename++) {
         switch (*filename) {
-            case '*': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF0C); break; // U+FF0C is the full-width comma
-            case '|': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF5C); break; // U+FF5C is the full-width vertical line
-            case '\\': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFFE5); break; // U+FFE5 is the full-width yen
-            case ':': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF1A); break; // U+FF1A is the full-width colon
-            case '"': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF02); break; // U+FF02 is the full-width quotation mark
-            case '<': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF1C); break; // U+FF1C is the full-width less-than
-            case '>': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF1E); break; // U+FF1E is the full-width greater-than
-            case '?': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF1F); break; // U+FF1F is the full-width question mark
-            case '/': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF0F); break; // U+FF0F is the full-width solidus
+            case '*': *(wchar_t *)&fix_filename[i++] = bswap((wchar_t)0xFF0C); break; // U+FF0C is the full-width comma
+            case '|': *(wchar_t *)&fix_filename[i++] = bswap((wchar_t)0xFF5C); break; // U+FF5C is the full-width vertical line
+            case '\\': *(wchar_t *)&fix_filename[i++] = bswap((wchar_t)0xFFE5); break; // U+FFE5 is the full-width yen
+            case ':': *(wchar_t *)&fix_filename[i++] = bswap((wchar_t)0xFF1A); break; // U+FF1A is the full-width colon
+            case '"': *(wchar_t *)&fix_filename[i++] = bswap((wchar_t)0xFF02); break; // U+FF02 is the full-width quotation mark
+            case '<': *(wchar_t *)&fix_filename[i++] = bswap((wchar_t)0xFF1C); break; // U+FF1C is the full-width less-than
+            case '>': *(wchar_t *)&fix_filename[i++] = bswap((wchar_t)0xFF1E); break; // U+FF1E is the full-width greater-than
+            case '?': *(wchar_t *)&fix_filename[i++] = bswap((wchar_t)0xFF1F); break; // U+FF1F is the full-width question mark
+            case '/': *(wchar_t *)&fix_filename[i++] = bswap((wchar_t)0xFF0F); break; // U+FF0F is the full-width solidus
             default: fix_filename[i] = *filename; break;
         }
     }

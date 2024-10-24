@@ -2,8 +2,8 @@
 //--------------------------------------------------
 // インクルード
 //--------------------------------------------------
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+// #define WIN32_LEAN_AND_MEAN
+// #include <Windows.h>
 #include <stdio.h>
 #include <direct.h>  // _mkdir
 #include "clCRID.h"
