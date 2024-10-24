@@ -2,9 +2,8 @@
 //--------------------------------------------------
 // インクルード
 //--------------------------------------------------
-// #define WIN32_LEAN_AND_MEAN
-// #include <Windows.h>
 #include <stdio.h>
+#include <iostream>
 #ifdef _WIN32
 	#include <direct.h>  // _mkdir for Windows
 #else
@@ -94,7 +93,6 @@ bool DirectoryCreate(const char *directory){
 //--------------------------------------------------
 // メイン
 //--------------------------------------------------
-#include <iostream>
 int main(int argc,char *argv[]){
 	// コマンドライン解析
 	unsigned int count=0;
@@ -145,8 +143,9 @@ int main(int argc,char *argv[]){
 		clCRID crid(ciphKey1,ciphKey2);
 		if(!crid.Demux(argv[i],filenameOut,true)){
 			printf("Error: 分離に失敗しました。\n");
+		}else {
+			printf("完了");
 		}
-
 	}
 
 	return 0;
