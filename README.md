@@ -1,4 +1,9 @@
 # CRID-usm-Decrypter
+## コンパイル
+```powershell
+# Windows
+g++ Source.cpp clCRID.cpp clUTF.cpp clADX.cpp -o Source.exe -fexec-charset=CP932
+```
 ## 使い方  
 ```
 CRID-umd-Decrypter.exe -a <A> -b <B> -o <Output> <Source>
