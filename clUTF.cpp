@@ -25,7 +25,8 @@ unsigned char *LoadFile(const char *filename,int *fileSize=NULL){
 
 	// 開く
 	FILE *fp;
-	if(fopen_s(&fp,filename,"rb"))return NULL;
+	fp = fopen(filename,"rb");
+	if (fp == NULL) return NULL;
 
 	// サイズを取得
 	fseek(fp,0,SEEK_END);
@@ -202,7 +203,8 @@ bool clUTF::SaveFileINI(const char *filename,bool subUTF){
 
 	// 開く
 	FILE *fp;
-	if(fopen_s(&fp,filename,"wb"))return false;
+	fp = fopen(filename,"wb");
+	if (fp == NULL) return false;
 
 	// 保存
 	SaveFileINI(fp,subUTF);

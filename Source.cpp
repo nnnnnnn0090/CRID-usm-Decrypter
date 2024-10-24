@@ -77,8 +77,8 @@ bool DirectoryCreate(const char *directory){
 //--------------------------------------------------
 // メイン
 //--------------------------------------------------
+#include <iostream>
 int main(int argc,char *argv[]){
-
 	// コマンドライン解析
 	unsigned int count=0;
 	char *filenameOut=NULL;
@@ -110,14 +110,17 @@ int main(int argc,char *argv[]){
 
 		// デフォルト出力ファイル名
 		char path[0x400];
-		if(!(filenameOut&&filenameOut[0])){
-			strcpy_s(path,sizeof(path),argv[i]);
-			char *d1=strrchr(path,'\\');
-			char *d2=strrchr(path,'/');
-			char *e=strrchr(path,'.');
-			if(e&&d1<e&&d2<e)*e='\0';
-			strcat_s(path,sizeof(path),".demux");
-			filenameOut=path;
+		if (!(filenameOut && filenameOut[0])) {
+			strncpy(path, argv[i], sizeof(path) - 1);
+			path[sizeof(path) - 1] = '\0';  // Ensure null termination
+
+			char *d1 = strrchr(path, '\\');
+			char *d2 = strrchr(path, '/');
+			char *e = strrchr(path, '.');
+			if (e && d1 < e && d2 < e) *e = '\0';  // Remove the file extension
+
+			strncat(path, ".demux", sizeof(path) - strlen(path) - 1);  // Append ".demux"
+			filenameOut = path;
 		}
 
 		printf("%s を分離中...\n",argv[i]);

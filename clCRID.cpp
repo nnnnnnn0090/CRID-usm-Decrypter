@@ -27,7 +27,7 @@ char *GetExtension(char *extension,int size,const char *path){
 	if(size>0)extension[0]='\0';
 	for(int i=strlen(path)-1;i>=0;i--){
 		if(path[i]=='.'){
-			strcpy_s(extension,size,&path[i+1]);
+			strcpy(extension, &path[i + 1]);
 			break;
 		}else if(path[i]=='\\'||path[i]=='/'){
 			break;
@@ -39,23 +39,24 @@ char *GetExtension(char *extension,int size,const char *path){
 //--------------------------------------------------
 // ファイル名に使えない文字を大文字に変更
 //--------------------------------------------------
-char *FixFilename(char *fix_filename,int size,const char *filename){
-	memset(fix_filename,0,size);
-	for(int i=0,len=strlen(filename);i<len&&i<size-3;i++,filename++){
-		switch(*filename){
-		case '*':*(WCHAR *)&fix_filename[i++]=bswap((WCHAR)'＊');break;
-		case '|':*(WCHAR *)&fix_filename[i++]=bswap((WCHAR)'｜');break;
-		case '\\':*(WCHAR *)&fix_filename[i++]=bswap((WCHAR)'￥');break;
-		case ':':*(WCHAR *)&fix_filename[i++]=bswap((WCHAR)'：');break;
-		case '"':*(WCHAR *)&fix_filename[i++]=bswap((WCHAR)'”');break;
-		case '<':*(WCHAR *)&fix_filename[i++]=bswap((WCHAR)'＜');break;
-		case '>':*(WCHAR *)&fix_filename[i++]=bswap((WCHAR)'＞');break;
-		case '?':*(WCHAR *)&fix_filename[i++]=bswap((WCHAR)'？');break;
-		case '/':*(WCHAR *)&fix_filename[i++]=bswap((WCHAR)'／');break;
-		default:fix_filename[i]=*filename;break;
-		}
-	}
-	return fix_filename;
+WCHAR bswap(WCHAR c);
+char *FixFilename(char *fix_filename, int size, const char *filename) {
+    memset(fix_filename, 0, size);
+    for (int i = 0, len = strlen(filename); i < len && i < size - 3; i++, filename++) {
+        switch (*filename) {
+            case '*': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF0C); break; // U+FF0C is the full-width comma
+            case '|': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF5C); break; // U+FF5C is the full-width vertical line
+            case '\\': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFFE5); break; // U+FFE5 is the full-width yen
+            case ':': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF1A); break; // U+FF1A is the full-width colon
+            case '"': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF02); break; // U+FF02 is the full-width quotation mark
+            case '<': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF1C); break; // U+FF1C is the full-width less-than
+            case '>': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF1E); break; // U+FF1E is the full-width greater-than
+            case '?': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF1F); break; // U+FF1F is the full-width question mark
+            case '/': *(WCHAR *)&fix_filename[i++] = bswap((WCHAR)0xFF0F); break; // U+FF0F is the full-width solidus
+            default: fix_filename[i] = *filename; break;
+        }
+    }
+    return fix_filename;
 }
 
 //--------------------------------------------------
@@ -82,12 +83,15 @@ bool clCRID::LoadFile(const char *filename){
 
 	// 開く
 	FILE *fp;
-	if(fopen_s(&fp,filename,"rb"))return false;
+	fp = fopen(filename,"rb");
+	if (fp == NULL) return false;
 
 	// ヘッダを取得
 	stInfo info;
 	fread(&info,sizeof(info),1,fp);
 	if(!CheckFile(&info,sizeof(info))){fclose(fp);return false;}
+	fp = fopen(filename,"rb");
+	if (fp == NULL) return false;
 	//info.signature=bswap(info.signature);
 	info.dataSize=bswap(info.dataSize);
 	info.paddingSize=bswap(info.paddingSize);
@@ -130,7 +134,8 @@ bool clCRID::Demux(const char *filename,const char *directory,bool adxDecode){
 
 	// 開く
 	FILE *fp,*fpInfo=NULL,*fpVideo=NULL,*fpAudio=NULL;
-	if(fopen_s(&fp,filename,"rb"))return false;
+	fp = fopen(filename,"rb");
+	if (fp == NULL) return false;
 
 	// チェック
 	stInfo info;
@@ -181,24 +186,28 @@ bool clCRID::Demux(const char *filename,const char *directory,bool adxDecode){
 						case 0x00000000:
 							if(!fpInfo){
 								FixFilename(fix_filename,_countof(fix_filename),_utf.GetElement(i,"filename")->GetValueString());
-								sprintf_s(filename,_countof(filename),"%s\\%s.ini",directory,fix_filename);
-								fopen_s(&fpInfo,filename,"wb");
+								snprintf(filename, sizeof(filename), "%s\\%s.ini", directory, fix_filename);
+								fpInfo = fopen(filename,"wb");
 							}
 							break;
 						case 0x40534656:
 							if(!fpVideo){
 								FixFilename(fix_filename,_countof(fix_filename),_utf.GetElement(i,"filename")->GetValueString());
-								sprintf_s(filename,_countof(filename),"%s\\%s.m2v",directory,fix_filename);
-								fopen_s(&fpVideo,filename,"wb");
+								snprintf(filename,_countof(filename),"%s\\%s.m2v",directory,fix_filename);
+								fpVideo = fopen(filename,"wb");
 							}
 							break;
 						case 0x40534641:
 							if(!fpAudio){
 								char ext[4];
 								FixFilename(fix_filename,_countof(fix_filename),_utf.GetElement(i,"filename")->GetValueString());
-								sprintf_s(filename,_countof(filename),"%s\\%s",directory,fix_filename);
-								if(strcmp(GetExtension(ext,_countof(ext),filename),"wav")!=0)strcat_s(filename,_countof(filename),".wav");
-								fopen_s(&fpAudio,filename,"wb");
+								snprintf(filename,_countof(filename),"%s\\%s",directory,fix_filename);
+								if (strcmp(GetExtension(ext, _countof(ext), filename), "wav") != 0) {
+									if (strlen(filename) + strlen(".wav") < _countof(filename)) {
+										strcat(filename, ".wav");
+									}
+								}
+								fpAudio = fopen(filename,"wb");
 							}
 							break;
 						}
