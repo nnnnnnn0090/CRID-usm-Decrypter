@@ -1,4 +1,4 @@
-# CRID-usm-Decrypter
+# CRID-usm-Decrypter (Windows / macOS)
 ## コンパイル
 ```powershell
 # Windows
